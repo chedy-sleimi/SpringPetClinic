@@ -45,29 +45,29 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-                    steps {
-                        script {
-                            bat 'kubectl apply -f deployment.yaml --validate=false'
-                            bat 'kubectl apply -f service.yaml --validate=false'
-                            bat 'kubectl rollout status deployment/springpetclinic-deployment'
-                        }
-                    }
-                }
-    }
+       stage('Deploy to Kubernetes') {
+                   steps {
+                       script {
+                           bat 'minikube kubectl -- apply -f deployment.yaml'
+                           bat 'minikube kubectl -- apply -f service.yaml'
+                           bat 'minikube kubectl -- rollout status deployment/springpetclinic-deployment'
+                       }
+                   }
+               }
+           }
 
-    post {
-        success {
-            echo '🎉 Pipeline completed successfully!'
-            echo 'Get Minikube IP: minikube ip'
-            echo 'Access app at: http://<minikube-ip>: 30080'
-        }
-        failure {
-            emailext(
-                to: 'c. sleimi23069@pi. tn',
-                subject: "Build Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
-                body:  "Job: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}"
-            )
-        }
-    }
-}
+           post {
+               success {
+                   echo '========================================='
+                   echo '🎉 Pipeline completed successfully!'
+                   echo '========================================='
+                   bat 'minikube kubectl -- get pods'
+                   bat 'minikube kubectl -- get svc'
+                   bat 'minikube service springpetclinic-service --url'
+                   echo 'Access the app using the URL above!'
+               }
+               failure {
+                   echo '❌ Build failed!  Check the console output.'
+               }
+           }
+       }
