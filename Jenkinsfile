@@ -45,22 +45,21 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    bat 'kubectl config use-context docker-desktop'
-                    bat 'kubectl apply -f deployment.yaml'
-                    bat 'kubectl apply -f service.yaml'
-                    bat 'kubectl rollout status deployment/springpetclinic-deployment'
-                }
-            }
-        }
+       stage('Deploy to Kubernetes') {
+           steps {
+               script {
+                   bat 'kubectl apply -f deployment. yaml'
+                   bat 'kubectl apply -f service.yaml'
+                   bat 'kubectl rollout status deployment/springpetclinic-deployment'
+               }
+           }
+       }
     }
 
     post {
         failure {
             emailext(
-                to: 'c.sleimi23069@pi.tn',
+                to: 'chedysleimi@gmail.com',
                 subject: "Build Failed: ${env.JOB_NAME} - ${env. BUILD_NUMBER}",
                 body: "Job: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}"
             )
