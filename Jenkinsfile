@@ -13,7 +13,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'master',
-                    url: 'https://github.com/chedy-sleimi/SpringPetClinic. git'
+                    url: 'https://github.com/chedy-sleimi/SpringPetClinic.git'
             }
         }
 
@@ -38,28 +38,28 @@ pipeline {
                         credentialsId: 'dockerhub-credentials',
                         usernameVariable: 'DOCKER_USER',
                         passwordVariable: 'DOCKER_PASS')]) {
-                        bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
+                        bat "echo %DOCKER_PASS%| docker login -u %DOCKER_USER% --password-stdin"
                         bat "docker push ${DOCKER_IMAGE}:latest"
                     }
                 }
             }
         }
+
+
     }
 
     post {
         success {
-            echo '========================================='
-            echo '🎉 CI Pipeline completed successfully!'
-            echo '========================================='
-            echo 'Docker image pushed to:  chedysleimi/springpetclinic: latest'
-            echo ''
-            echo 'To deploy to Kubernetes, run these commands:'
-            echo 'kubectl apply -f deployment.yaml'
-            echo 'kubectl apply -f service.yaml'
-            echo 'minikube service springpetclinic-service --url'
+            echo '🎉 Pipeline completed successfully!'
+            echo 'Get Minikube IP: minikube ip'
+            echo 'Access app at: http://<minikube-ip>: 30080'
         }
         failure {
-            echo '❌ Build failed!  Check the console output.'
+            emailext(
+                to: 'c. sleimi23069@pi. tn',
+                subject: "Build Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
+                body:  "Job: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}"
+            )
         }
     }
 }
