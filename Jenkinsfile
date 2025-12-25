@@ -38,30 +38,35 @@ pipeline {
                         credentialsId: 'dockerhub-credentials',
                         usernameVariable: 'DOCKER_USER',
                         passwordVariable: 'DOCKER_PASS')]) {
-                        bat "echo %DOCKER_PASS%| docker login -u %DOCKER_USER% --password-stdin"
+                        bat "echo %DOCKER_PASS%| docker login -u %DOCKER_USER --password-stdin"
                         bat "docker push ${DOCKER_IMAGE}:latest"
                     }
                 }
             }
         }
 
-       stage('Deploy to Kubernetes') {
-           steps {
-               script {
-                   bat 'kubectl apply -f deployment.yaml'
-                   bat 'kubectl apply -f service.yaml'
-                   bat 'kubectl rollout status deployment/springpetclinic-deployment'
-               }
-           }
-       }
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    bat 'kubectl apply -f deployment.yaml'
+                    bat 'kubectl apply -f service.yaml'
+                    bat 'kubectl rollout status deployment/springpetclinic-deployment'
+                }
+            }
+        }
     }
 
     post {
+        success {
+            echo '🎉 Pipeline completed successfully!'
+            echo 'Get Minikube IP: minikube ip'
+            echo 'Access app at: http://<minikube-ip>: 30080'
+        }
         failure {
             emailext(
-                to: 'chedysleimi@gmail.com',
-                subject: "Build Failed: ${env.JOB_NAME} - ${env. BUILD_NUMBER}",
-                body: "Job: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}"
+                to: 'c. sleimi23069@pi. tn',
+                subject: "Build Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
+                body:  "Job: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}"
             )
         }
     }
