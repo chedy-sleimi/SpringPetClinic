@@ -48,9 +48,10 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    bat 'minikube kubectl -- apply -f deployment.yaml'
-                    bat 'minikube kubectl -- apply -f service.yaml'
-                    bat 'minikube kubectl -- rollout status deployment/springpetclinic-deployment'
+                    bat 'kubectl config use-context docker-desktop'
+                    bat 'kubectl apply -f deployment.yaml'
+                    bat 'kubectl apply -f service.yaml'
+                    bat 'kubectl rollout status deployment/springpetclinic-deployment'
                 }
             }
         }
