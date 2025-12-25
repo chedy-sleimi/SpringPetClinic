@@ -45,15 +45,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-                    steps {
-                        script {
-                            bat 'kubectl apply -f deployment.yaml --validate=false'
-                            bat 'kubectl apply -f service.yaml --validate=false'
-                            bat 'kubectl rollout status deployment/springpetclinic-deployment'
-                        }
-                    }
-                }
+
     }
 
     post {
