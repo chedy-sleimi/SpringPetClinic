@@ -45,29 +45,20 @@ pipeline {
             }
         }
 
-       stage('Deploy to Kubernetes') {
-                   steps {
-                       script {
-                           bat 'minikube kubectl -- apply -f deployment.yaml'
-                           bat 'minikube kubectl -- apply -f service.yaml'
-                           bat 'minikube kubectl -- rollout status deployment/springpetclinic-deployment'
-                       }
-                   }
-               }
-           }
-
-           post {
-               success {
-                   echo '========================================='
-                   echo '🎉 Pipeline completed successfully!'
-                   echo '========================================='
-                   bat 'minikube kubectl -- get pods'
-                   bat 'minikube kubectl -- get svc'
-                   bat 'minikube service springpetclinic-service --url'
-                   echo 'Access the app using the URL above!'
-               }
-               failure {
-                   echo '❌ Build failed!  Check the console output.'
-               }
-           }
-       }
+      post {
+              success {
+                  echo '========================================='
+                  echo '🎉 CI Pipeline completed successfully!'
+                  echo '========================================='
+                  echo 'Docker image pushed to:  chedysleimi/springpetclinic: latest'
+                  echo ''
+                  echo 'To deploy to Kubernetes, run these commands:'
+                  echo 'kubectl apply -f deployment.yaml'
+                  echo 'kubectl apply -f service.yaml'
+                  echo 'minikube service springpetclinic-service --url'
+              }
+              failure {
+                  echo '❌ Build failed!  Check the console output.'
+              }
+          }
+      }
